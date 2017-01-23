@@ -13,9 +13,47 @@
 \end{center}
 
 \section*{Answer to Question 1}
+Here is a brief description of the algorithm:\\
+\\
+\textbf{Map:}\\
+At this step for each line of data, assume there is a simple line of data like this:
+$$
+    (N_{i}: N_{j}, N_{k}, N_{m})
+$$
+Take its values and construct pairs, those pairs represents they share the same friend $N_i$. Then we construct:
+$$
+ (N_j: (N_k, 1)), (N_j: (N_m, 1)), (N_k: (N_j, 1)), (N_k: (N_m, 1)), (N_m: (N_j, 1)), (N_m: (N_k, 1))
+$$
+Here $1$ means, the value can be recommended to the key. Since there may have possibility that they are already friends, 
+therefore based on this line we can construct:
+$$
+ (N_i:(N_j, 0)), (N_i:(N_k, 0)), (N_i:(N_m, 0))
+$$
+Here $0$ means the value cannot be recommended to the key.\\
+\\
+\textbf{Reduce:}\\
+Each reducer has two tasks to do. For the value tuples, 
+if the value contains $1$ this value will be added to a hash table and count how many this value appears.
+On the other hand if the value tuple contains $0$, this value will be added to a set. 
+This set keeps a record who is already a friend of the key. 
+After iterate all the value tuple, name in the set will be excluded from the hash table.\\
+\\
+The hash table will in the end be sorted and output its top 10 records.\\
+\\
+924	6995,45881,439,43748,2409,15416,11860\\
+8941 8944,8943,8940\\
+8942 8939,8944,8943,8940\\
+9019	9022,9023,317\\
+9020	9021,9022,9017,9016,9023,317\\
+9021	9020,9022,9017,9016,9023,317\\
+9022	9021,9020,9019,9023,9017,9016,317\\
+9990	37941,34642,34485,34299,13877,13478,13134\\
+9992	9989,9987,35667,9991\\
+9993	9991,37941,34642,34485,34299,13877,13478,13134\\
 
 \pagebreak[4]
 \section*{Answer to Question 2(a)}
+
 
 \pagebreak[4]
 \section*{Answer to Question 2(b)}
