@@ -145,18 +145,89 @@ Therefore, conviction is desirable.
 
 \pagebreak[4]
 \section*{Answer to Question 2(d)}
+\begin{equation*}
+\begin{aligned}
+& conf(DAI93865\rightarrow FRO40251) = 1.0\\
+& conf(GRO85051\rightarrow FRO40251) = 0.999176276771005\\
+& conf(GRO38636\rightarrow FRO40251) = 0.9906542056074766)\\
+& conf(ELE12951\rightarrow FRO40251) = 0.9905660377358491)\\
+& conf(DAI88079\rightarrow FRO40251) = 0.9867256637168141)
+\end{aligned}
+\end{equation*}
 
 \pagebreak[4]
 \section*{Answer to Question 2(e)}
+\begin{equation*}
+\begin{aligned}
+& conf(DAI23334,ELE92920\rightarrow DAI62779) = 1.0\\
+& conf(DAI31081,GRO85051\rightarrow FRO40251) = 1.0\\
+& conf(DAI55911,GRO85051\rightarrow FRO40251) = 1.0\\
+& conf(DAI62779,DAI88079\rightarrow FRO40251) = 1.0\\
+& conf(DAI75645,GRO85051\rightarrow FRO40251) = 1.0
+\end{aligned}
+\end{equation*}
+
 
 \pagebreak[4]
 \section*{Answer to Question 3(a)}
+The probability of getting don`t know is:\\
+\begin{equation}
+    P = \frac{n-m}{n}\frac{n-m-1}{n-1}...\frac{n-m-k+1}{n-k+1} =\frac{\frac{(n-m)!}{(n-m-k)!}}{\frac{n!}{(n-k)!}}
+\end{equation}
+It is easy to see:
+\begin{equation}
+    P = \frac{\frac{(n-m)!}{(n-m-k)!}}{\frac{n!}{(n-k)!}} \leq (\frac{n-m}{n})^k
+\end{equation}
+Then let`s prove:
+\begin{equation}
+    (\frac{n-m}{n})^k \leq (\frac{n-k}{n})^m
+\end{equation}
+It can be rewriten as:
+\begin{equation}
+    (n-m)^k(n)^{m-k} \leq (n-k)^m
+\end{equation}
+Use the AM–GM inequality and also given $m\geq k$:
+\begin{equation}
+    (n-m)^k(n)^{m-k} \leq (\frac{k(n-m)+(m-k)n}{m-k+k})^{m-k+k} = (n-k)^{m}
+\end{equation}
+Therefore, when $m=k$ this inequality gets its equal sign:
+\begin{equation}
+    P  \leq (\frac{n-m}{n})^k \leq (\frac{n-k}{n})^m
+\end{equation}
 
 \pagebreak[4]
 \section*{Answer to Question 3(b)}
+Use the result from 3(a) and assume:
+\begin{equation*}
+    P = (\frac{n-k}{n})^m = (1 - \frac{1}{n/k})^m = (1 - \frac{1}{n/k})^{n/k\frac{m}{n/k}}
+\end{equation*}
+Since $n$ is much larger than $k$, therefore we can approximate as following:
+\begin{equation*}
+    P = (\frac{n-k}{n})^m = (1 - \frac{1}{n/k})^{n/k\frac{m}{n/k}} \approx e^{-\frac{m}{n/k}}
+\end{equation*}
+Therefore,
+\begin{equation*}
+    -\frac{m}{n/k} = -10
+\end{equation*}
+\begin{equation}
+    k = 10\frac{n}{m}
+\end{equation}
 
 \pagebreak[4]
 \section*{Answer to Question 3(c)}
+a) Below is an example of the matrix:
+\begin{equation*}
+\begin{bmatrix}
+    1 & 1\\
+    0 & 1\\
+    1 & 0
+\end{bmatrix}
+\end{equation*}
+b) The Jaccard Similarity for the two columns is $1/3$.\\
+\\
+c) There are three cyclic permutation and the resulting signatures of them are:
+$(1, 1)$, $(3, 2)$ and $(3, 1)$. As can be seen only one of them has the same minhash value.
+Therefore, the probability is $1/3$
 
 \pagebreak[4]
 \section*{Answer to Question 4(a)}
