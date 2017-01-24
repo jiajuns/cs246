@@ -1,6 +1,7 @@
 \documentclass[11pt]{article}
 \usepackage{fullpage}
 \usepackage{url}
+\usepackage{amsmath}
 \begin{document}
 \thispagestyle{empty}
 \parindent 0pt
@@ -8,7 +9,7 @@
 \large
 
 \begin{center}
-\LARGE{\bf \textsf{CS246: Mining Massive Datasets}}\\ {\bf \textsf{Homework 1}} 
+\LARGE{\bf \textsf{CS246: Mining Massive Datasets}}\\ {\bf \textsf{Homework 1}}
 \\*[4ex]
 \end{center}
 
@@ -24,7 +25,7 @@ Take its values and construct pairs, those pairs represents they share the same 
 $$
  (N_j: (N_k, 1)), (N_j: (N_m, 1)), (N_k: (N_j, 1)), (N_k: (N_m, 1)), (N_m: (N_j, 1)), (N_m: (N_k, 1))
 $$
-Here $1$ means, the value can be recommended to the key. Since there may have possibility that they are already friends, 
+Here $1$ means, the value can be recommended to the key. Since there may have possibility that they are already friends,
 therefore based on this line we can construct:
 $$
  (N_i:(N_j, 0)), (N_i:(N_k, 0)), (N_i:(N_m, 0))
@@ -32,10 +33,10 @@ $$
 Here $0$ means the value cannot be recommended to the key.\\
 \\
 \textbf{Reduce:}\\
-Each reducer has two tasks to do. For the value tuples, 
+Each reducer has two tasks to do. For the value tuples,
 if the value contains $1$ this value will be added to a hash table and count how many this value appears.
-On the other hand if the value tuple contains $0$, this value will be added to a set. 
-This set keeps a record who is already a friend of the key. 
+On the other hand if the value tuple contains $0$, this value will be added to a set.
+This set keeps a record who is already a friend of the key.
 After iterate all the value tuple, name in the set will be excluded from the hash table.\\
 \\
 The hash table will in the end be sorted and output its top 10 records.\\
@@ -53,13 +54,94 @@ The hash table will in the end be sorted and output its top 10 records.\\
 
 \pagebreak[4]
 \section*{Answer to Question 2(a)}
-
+Ignoring $Pr(B)$ can lead to recommen items that are not very frequent;
+or item $B$ has very high support then it shows up in nearly every basket.
+If this item has very high support confidence $conf(A\rightarrow B)$ is not very useful.\\
+\\
+While lift and conviction consider support in their formula. When $Pr(B)$ gets higher,
+there will be a high support $S(B)$. Then $lift(A\rightarrow B) = \frac{conf(A\rightarrow B)}{S(B)}$
+will get a smaller value. Conviction is similar, a high support value $S(B)$ will make conviction smaller.
+Therefore, both conviction and lift consider $Pr(B)$ and reflects how offer $A$ and $B$ are together due to the existence of $A$.
 
 \pagebreak[4]
 \section*{Answer to Question 2(b)}
+\textbf{confidence: }\\
+\begin{equation}
+    conf(A\rightarrow B) = Pr(B|A)
+\end{equation}
+\begin{equation}
+    conf(B\rightarrow A) = Pr(A|B)
+\end{equation}
+It is very easy to see they are not necessarily the same.
+For example there are two baskets $\{A, B\}, \{A\}$ and assume $N=1$.
+$conf(A\rightarrow B) = 0.5$ and $conf(B\rightarrow A) = 1$.
+Confidence is not symmetrical.\\
+\\
+\textbf{lift: }
+\begin{equation}
+\begin{aligned}
+    lift(A\rightarrow B) & = \frac{conf(A\rightarrow B)}{S(B)}\\
+    & = \frac{Pr(B|A)}{Support(B)/N}\\
+    & = \frac{Support(AB)/Support(A)}{Support(B)/N} = \frac{Support(AB)/Support(B)}{Support(A)/N}\\
+    & = \frac{Pr(A|B)}{Support(A)/N}\\
+    & = \frac{conf(B\rightarrow A)}{S(A)}\\
+    & = lift(B\rightarrow A)
+\end{aligned}
+\end{equation}
+Therefore lift is symmetrical.\\
+\\
+\textbf{conviction: }
+\begin{equation}
+\begin{aligned}
+    conviction(A\rightarrow B) & = \frac{1 - support(B)/N}{1 - conf(A\rightarrow B)}\\
+    & = \frac{1 - support(B)/N}{1 - Pr(B|A)}\\
+    & = \frac{1 - support(B)/N}{1 - Support(AB)/Support(A)}
+\end{aligned}
+\end{equation}
+\begin{equation}
+\begin{aligned}
+    conviction(B\rightarrow A) & = \frac{1 - support(A)/N}{1 - conf(B\rightarrow A)}\\
+    & = \frac{1 - support(A)/N}{1 - Pr(A|B)}\\
+    & = \frac{1 - support(A)/N}{1 - Support(AB)/Support(B)}
+\end{aligned}
+\end{equation}
+It can be seen that above two equations do not necessarily equal to each other.
+For example there are two baskets $\{A, B\}, \{A\}$ and assume $N=1$.
+$conviction(A\rightarrow B) = 0$ and $conviction(B\rightarrow A) = -\infty$.
+Therefore, conviction is not symmetrical.
 
 \pagebreak[4]
 \section*{Answer to Question 2(c)}
+\textbf{confidence: }\\
+\begin{equation}
+    conf(A\rightarrow B) = Pr(B|A) = \frac{support(AB)}{support(A)}
+\end{equation}
+$support(AB) \leq support(A)$ and $conf(A\rightarrow B)$ gets its maxima only when $support(AB) = support(A)$.
+This means this rules hold $100\%$ of the time. Therefore, confidence is desirable.\\
+\\
+\textbf{lift: }
+\begin{equation}
+\begin{aligned}
+    lift(A\rightarrow B) & = \frac{conf(A\rightarrow B)}{S(B)}\\
+    & = \frac{Pr(B|A)}{Support(B)/N}\\
+    & = \frac{Support(AB)/Support(A)}{Support(B)/N}
+\end{aligned}
+\end{equation}
+When the rules hold $100\%$ of the time, have $support(AB) = support(A)$.
+If we assume $support(B)$ is fixed, then lift reach its maxima. Therefore, lift is desirable.
+\\
+\textbf{conviction: }
+\begin{equation}
+\begin{aligned}
+    conviction(A\rightarrow B) & = \frac{1 - support(B)/N}{1 - conf(A\rightarrow B)}\\
+    & = \frac{1 - support(B)/N}{1 - Pr(B|A)}\\
+    & = \frac{1 - support(B)/N}{1 - Support(AB)/Support(A)}
+\end{aligned}
+\end{equation}
+The same logic goes for conviction.
+Assume $support(B)$ is fixed, $conviction(A\rightarrow B)$ increases with $support(A)$ increasing.
+$conviction(A\rightarrow B)$ reaches its maxima when $support(AB) = support(A)$. This imply rules hold $100\%$ of the time.
+Therefore, conviction is desirable.
 
 \pagebreak[4]
 \section*{Answer to Question 2(d)}
@@ -96,13 +178,13 @@ The hash table will in the end be sorted and output its top 10 records.\\
 \LARGE{\bf \textsf{Cover Sheet}} \\*[4ex]
 \end{center}
 
-\textbf{Assignment Submission } Fill in and include this cover sheet with each of your assignments. Assignments are due at 11:59pm. All students (SCPD and non-SCPD) must submit their homeworks via GradeScope (\url{http://www.gradescope.com}). Students can typeset or scan their homeworks. Make sure that you answer each question on a separate page. Students also need to upload their code at \url{http://snap.stanford.edu/submit}. Put all the code for a single question into a single file and upload it. Please do not put any code in your GradeScope submissions. 
+\textbf{Assignment Submission } Fill in and include this cover sheet with each of your assignments. Assignments are due at 11:59pm. All students (SCPD and non-SCPD) must submit their homeworks via GradeScope (\url{http://www.gradescope.com}). Students can typeset or scan their homeworks. Make sure that you answer each question on a separate page. Students also need to upload their code at \url{http://snap.stanford.edu/submit}. Put all the code for a single question into a single file and upload it. Please do not put any code in your GradeScope submissions.
 \\
 \\
-\textbf{Late Day Policy } Each student will have a total of {\em two} free late periods. {\em One late period expires at the start of each class.} (Homeworks are usually due on Thursdays, which means the first late periods expires on the following Tuesday.) Once these late periods are exhausted, any assignments turned in late will be penalized 50\% per late period. However, no assignment will be accepted more than {\em one} late period after its due date. 
+\textbf{Late Day Policy } Each student will have a total of {\em two} free late periods. {\em One late period expires at the start of each class.} (Homeworks are usually due on Thursdays, which means the first late periods expires on the following Tuesday.) Once these late periods are exhausted, any assignments turned in late will be penalized 50\% per late period. However, no assignment will be accepted more than {\em one} late period after its due date.
 \\
 \\
-\textbf{Honor Code } We strongly encourage students to form study groups. Students may discuss and work on homework problems in groups. However, each student must write down their solutions independently i.e., each student must understand the solution well enough in order to reconstruct it by him/herself.  Students should clearly mention the names of all the other students who were part of their discussion group. Using code or solutions obtained from the web (github/google/previous year solutions etc.) is considered an honor code violation. We check all the submissions for plagiarism. We take the honor code very seriously and expect students to do the same. 
+\textbf{Honor Code } We strongly encourage students to form study groups. Students may discuss and work on homework problems in groups. However, each student must write down their solutions independently i.e., each student must understand the solution well enough in order to reconstruct it by him/herself.  Students should clearly mention the names of all the other students who were part of their discussion group. Using code or solutions obtained from the web (github/google/previous year solutions etc.) is considered an honor code violation. We check all the submissions for plagiarism. We take the honor code very seriously and expect students to do the same.
 
 \vfill
 \vfill
