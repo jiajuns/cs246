@@ -1,7 +1,7 @@
 \documentclass[11pt]{article}
 \usepackage{fullpage}
 \usepackage{url}
-\usepackage{amsmath}
+\usepackage{amsmath, graphicx}
 \begin{document}
 \thispagestyle{empty}
 \parindent 0pt
@@ -175,21 +175,46 @@ It is obvious to prove: the singular value of $M$ are on the diagonal of $\Sigma
 
 \pagebreak[4]
 \section*{Answer to Question 3(a)}
-5 nodes with top page rank: [27, 40, 1, 14, 53]\\
+5 nodes with top page rank: [53, 14, 1, 40, 27]\\
 5 nodes with lowest page rank: [85, 59, 81, 37, 89]
 
 \pagebreak[4]
 \section*{Answer to Question 3(b)}
-5 nodes with top hubbiness: [58, 11, 22, 39, 59]\\
+5 nodes with top hubbiness: [59, 39, 22, 11, 58]\\
 5 nodes with top hubbiness: [9, 35, 15, 95, 53]\\
-5 nodes with top authority: [1, 53, 27, 40, 66]\\
+5 nodes with top authority: [66, 40, 27, 53, 1]\\
 5 nodes with top authority: [54, 33, 24, 67, 50]
 
 \pagebreak[4]
 \section*{Answer to Question 4(a)}
+Percentage change:\\
+Euclidean c1.txt 0.26398863292043157\\
+Euclidean c2.txt 0.7525973243724743\\
+\\
+It is found that by initializing with c2.txt the cost is smaller than random initialization.
+Random initialization seems get trapped in its local optimal.
+
+\begin{figure}[h]
+\center
+\includegraphics[scale=0.7]{Euclidean.png}
+\caption{Euclidean Distance}
+\end{figure}
+
 
 \pagebreak[4]
 \section*{Answer to Question 4(b)}
+Percentage change:\\
+Manhattan c1.txt 0.16884444201690121\\
+Manhattan c2.txt 0.49967689555556216\\
+\\
+From the figure below we can find the result is different from previous part. 
+When using different distance measure, the ideal clustering is changed. Therefore c2.txt may not be closer to the ideal clustering than c1.txt.
+
+\begin{figure}[h]
+\center
+\includegraphics[scale=0.7]{Manhattan.png}
+\caption{Manhattan Distance}
+\end{figure}
 
 \pagebreak[4]
 \begin{center}
