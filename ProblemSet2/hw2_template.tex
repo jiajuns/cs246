@@ -9,7 +9,7 @@
 \large
 
 \begin{center}
-\LARGE{\bf \textsf{CS246: Mining Massive Datasets}}\\ {\bf \textsf{Homework 2}} 
+\LARGE{\bf \textsf{CS246: Mining Massive Datasets}}\\ {\bf \textsf{Homework 2}}
 \\*[4ex]
 \end{center}
 
@@ -107,7 +107,8 @@ Apply the SVD decomposition for matrix $M$, also it is important to note that $U
 \begin{aligned}
     M^TM & = (U\Sigma V^T)^T(U\Sigma V^T)\\
     & = V\Sigma^TU^TU\Sigma V^T\\
-    & = V\Sigma^T\Sigma V^T
+    & = V\Sigma^T\Sigma V^T\\
+    & = V\Sigma^2 V^T
 \end{aligned}
 \end{equation}
 
@@ -121,7 +122,7 @@ From SVD we obtain:
 \end{equation*}
 Where,
 $$
-U = 
+U =
 \begin{pmatrix}
     &-0.27854301 & 0.5\\
     &-0.27854301 & -0.5\\
@@ -130,14 +131,14 @@ U =
 \end{pmatrix}
 $$
 $$
-\Sigma = 
+\Sigma =
 \begin{pmatrix}
     &7.61577311 & 0\\
     &0 & 1.41421356
 \end{pmatrix}
 $$
 $$
-V^T = 
+V^T =
 \begin{pmatrix}
     & -0.70710678 & -0.70710678\\
     & -0.70710678 & 0.70710678
@@ -146,7 +147,11 @@ $$
 \item
 The eigenvalue and eigenvector for $M^TM$:
 $$
-Evectors = [(0.70710678, -0.70710678), (0.70710678, 0.70710678)]
+Evectors =
+\begin{pmatrix}
+    & 0.70710678 & -0.70710678\\
+    & 0.70710678 & 0.70710678
+\end{pmatrix}
 $$
 $$
     Evals = 58, 2
@@ -203,7 +208,7 @@ Percentage change:\\
 Manhattan c1.txt 0.16884444201690121\\
 Manhattan c2.txt 0.49967689555556216\\
 \\
-From the figure below we can find the result is different from previous part. 
+From the figure below we can find the result is different from previous part.
 When using different distance measure, the ideal clustering is changed. Therefore c2.txt may not be closer to the ideal clustering than c1.txt.
 
 \begin{figure}[h]
@@ -217,13 +222,13 @@ When using different distance measure, the ideal clustering is changed. Therefor
 \LARGE{\bf \textsf{Cover Sheet}} \\*[4ex]
 \end{center}
 
-\textbf{Assignment Submission } Fill in and include this cover sheet with each of your assignments. Assignments are due at 11:59pm. All students (SCPD and non-SCPD) must submit their homeworks via GradeScope (\url{http://www.gradescope.com}). Students can typeset or scan their homeworks. Make sure that you answer each question on a separate page. Students also need to upload their code at \url{http://snap.stanford.edu/submit}. Put all the code for a single question into a single file and upload it. Please do not put any code in your GradeScope submissions. 
+\textbf{Assignment Submission } Fill in and include this cover sheet with each of your assignments. Assignments are due at 11:59pm. All students (SCPD and non-SCPD) must submit their homeworks via GradeScope (\url{http://www.gradescope.com}). Students can typeset or scan their homeworks. Make sure that you answer each question on a separate page. Students also need to upload their code at \url{http://snap.stanford.edu/submit}. Put all the code for a single question into a single file and upload it. Please do not put any code in your GradeScope submissions.
 \\
 \\
-\textbf{Late Day Policy } Each student will have a total of {\em two} free late periods. {\em One late period expires at the start of each class.} (Homeworks are usually due on Thursdays, which means the first late periods expires on the following Tuesday.) Once these late periods are exhausted, any assignments turned in late will be penalized 50\% per late period. However, no assignment will be accepted more than {\em one} late period after its due date. 
+\textbf{Late Day Policy } Each student will have a total of {\em two} free late periods. {\em One late period expires at the start of each class.} (Homeworks are usually due on Thursdays, which means the first late periods expires on the following Tuesday.) Once these late periods are exhausted, any assignments turned in late will be penalized 50\% per late period. However, no assignment will be accepted more than {\em one} late period after its due date.
 \\
 \\
-\textbf{Honor Code } We strongly encourage students to form study groups. Students may discuss and work on homework problems in groups. However, each student must write down their solutions independently i.e., each student must understand the solution well enough in order to reconstruct it by him/herself.  Students should clearly mention the names of all the other students who were part of their discussion group. Using code or solutions obtained from the web (github/google/previous year solutions etc.) is considered an honor code violation. We check all the submissions for plagiarism. We take the honor code very seriously and expect students to do the same. 
+\textbf{Honor Code } We strongly encourage students to form study groups. Students may discuss and work on homework problems in groups. However, each student must write down their solutions independently i.e., each student must understand the solution well enough in order to reconstruct it by him/herself.  Students should clearly mention the names of all the other students who were part of their discussion group. Using code or solutions obtained from the web (github/google/previous year solutions etc.) is considered an honor code violation. We check all the submissions for plagiarism. We take the honor code very seriously and expect students to do the same.
 
 \vfill
 \vfill
