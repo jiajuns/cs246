@@ -1,0 +1,247 @@
+package cs246.stanford.kmeans;
+
+import java.io.IOException;
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.util.*;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.hadoop.util.Tool;
+import org.apache.hadoop.util.ToolRunner;
+
+public class kmeans extends Configured implements Tool {
+   public static void main(String[] args) throws Exception {
+	   
+	   Configuration conf = new Configuration();
+	   
+	   String dataDir = args[0];
+	   String outputDir = args[1];
+	   String centroidFile = args[2];
+	   
+	   String[] newArgs = new String[2];
+	   int iterations = 20;
+	   
+	   for(int i = 1; i <= iterations; i++){
+		   
+		   if (i==1){   
+			   newArgs[0] = dataDir;
+			   newArgs[1] = outputDir + String.valueOf(i);
+			   conf.set("centroidFile", centroidFile);
+			   
+			   System.out.println(Arrays.toString(newArgs));
+			   int res = ToolRunner.run(conf, new kmeans(), newArgs);
+		   } else { 	   
+			   newArgs[0] = dataDir;
+			   newArgs[1] = outputDir + String.valueOf(i);
+			   conf.set("centroidFile", outputDir + String.valueOf(i-1) + "/part-r-00000");
+			   
+			   System.out.println(Arrays.toString(newArgs));
+			   int res = ToolRunner.run(conf, new kmeans(), newArgs);
+		   }
+		   
+	   }   
+   }
+   
+   @Override
+   public int run(String[] args) throws Exception {
+      System.out.println(Arrays.toString(args));
+      
+      Job job = new Job(getConf(), "kmeans");
+      job.setJarByClass(kmeans.class);
+      
+      job.setMapOutputKeyClass(Text.class);
+      job.setMapOutputValueClass(Text.class);
+      
+      job.setOutputKeyClass(Text.class);
+      job.setOutputValueClass(Text.class);
+      
+      job.setMapperClass(Map.class);
+      job.setReducerClass(Reduce.class);
+      
+      job.setInputFormatClass(TextInputFormat.class);
+      job.setOutputFormatClass(TextOutputFormat.class);
+
+      FileInputFormat.addInputPath(job, new Path(args[0]));
+      FileOutputFormat.setOutputPath(job, new Path(args[1]));
+      
+      job.waitForCompletion(true);
+      
+      return 0;
+   }
+   
+//   this function use http://www.technical-recipes.com/2011/reading-text-files-into-string-arrays-in-java/
+   public static ArrayList<String> ReadFile(String fileName) throws IOException{
+	   
+	   FileReader fileReader = new FileReader(fileName);
+	   BufferedReader bufferedReader = new BufferedReader(fileReader);
+	   String line = null;
+	   ArrayList<String> lines = new ArrayList<String>();
+	   while ((line = bufferedReader.readLine()) != null){   
+		   lines.add(line);
+	   }
+	   
+	   bufferedReader.close();
+	   return lines;
+   }
+
+   public static double L2Distance(ArrayList<Double> c, ArrayList<Double> p) throws IOException{
+	   double distance = 0.0;
+	   for (int i = 0; i < c.size(); i++){
+		   distance += Math.pow((c.get(i)-p.get(i)), 2);  
+	   }
+	   return distance;
+   }
+   
+   public static double MDistance(ArrayList<Double> c, ArrayList<Double> p) throws IOException{
+	   double distance = 0.0;
+	   for (int i = 0; i < c.size(); i++){
+		   distance += Math.abs(c.get(i)-p.get(i));	   
+	   }
+	   return distance;
+   }
+   
+	public static ArrayList<Double> InitializeArray(ArrayList<Double> array, int length) throws IOException{	
+		for (int i = 0; i < length; i++) {
+			  array.add(0.0);
+		}
+		return array;
+	} 
+   
+	public static class Map extends Mapper<LongWritable, Text, Text, Text> {
+	    private Text keyC = new Text();
+	    private Text point = new Text();
+	    private Text cost = new Text();
+	    
+		@Override
+		public void map(LongWritable key, Text value, Context context)
+		        throws IOException, InterruptedException {
+			
+			// get centroids file into a Array of centroid.
+			Configuration conf = context.getConfiguration();
+			String centroidFile = conf.get("centroidFile");
+			
+			ArrayList<String> centroidRaw = ReadFile(centroidFile);
+			ArrayList<ArrayList<Double>> centroids = new ArrayList<ArrayList<Double>>();
+			for (String centroid: centroidRaw){
+				
+				if (!centroid.startsWith("cost")){
+					if (centroid.startsWith("centroid")){
+						centroid = centroid.substring(9, centroid.length());
+					}
+					
+					String[] centroidValues = centroid.split("\\s+");				
+					ArrayList<Double> c = new ArrayList<Double>(centroidValues.length);
+					
+					c = InitializeArray(c, centroidValues.length);
+					
+					for (int i = 0; i < centroidValues.length; i++){
+						c.set(i, Double.parseDouble(centroidValues[i]));
+					}
+					centroids.add(c);			
+				}
+			}
+			
+			// 
+			point.set(value);
+			String[] pointValue = point.toString().split("\\s+");
+			ArrayList<Double> p = new ArrayList<Double>(pointValue.length);
+			
+			p = InitializeArray(p, pointValue.length);
+					
+			for (int i = 0; i < pointValue.length; i++){
+				p.set(i, Double.parseDouble(pointValue[i]));
+			}
+			
+			double minDist = MDistance(centroids.get(0), p);
+			double tempDist = 0.0;
+			ArrayList<Double> targetC = centroids.get(0);
+			
+			for (int i = 1; i < centroids.size(); i++){
+				tempDist = MDistance(centroids.get(i), p);
+				if (tempDist < minDist){
+					minDist = tempDist;
+					targetC = centroids.get(i);
+				}
+			}
+			keyC.set(targetC.toString());
+			context.write(keyC, point);
+			
+			keyC.set("cost");
+			cost.set(String.valueOf(minDist));
+			context.write(keyC, cost);
+		}
+	}
+	
+	 public static class Reduce extends Reducer<Text, Text, Text, Text> {
+		 
+	     private Text k = new Text();
+	     private Text centroid = new Text();
+	     private Text totalCost = new Text();		 
+		 
+		 @Override
+	     public void reduce(Text key, Iterable<Text> values, Context context)
+	    		 throws IOException, InterruptedException {
+			 
+			 if (key.toString().startsWith("cost")){
+				  
+				 double cost = 0.0;
+				 for (Text value: values){
+					cost = cost + Double.parseDouble(value.toString()); 
+				 } 
+				 totalCost.set(String.valueOf(cost));
+				 k.set("cost");
+				 context.write(k, totalCost);
+				 
+			 } else {
+				 
+				 System.out.println(key);
+				 String oldCentroid = key.toString();
+				 String[] oldCentroidValue = oldCentroid.substring(1, oldCentroid.length()-1).split(",");
+	 			 
+				 ArrayList<Double> c = new ArrayList<Double>(oldCentroidValue.length);
+				 c = InitializeArray(c, oldCentroidValue.length);
+				 
+				 int pointCount = 0;
+				 for (Text value: values){
+					 
+					 String point = value.toString();
+					 String[] pointValue = point.split("\\s+");
+					 
+					 int index = 0;
+					 for (String coordValue: pointValue){ 
+						 c.set(index, c.get(index) + Double.parseDouble(coordValue)); 
+						 index ++;
+					 }
+					 pointCount ++;
+				 }
+				 
+				 for (int i = 0; i < c.size(); i++){
+					 c.set(i, c.get(i)/pointCount);
+				 }
+				 	 
+				 String output = "";
+				 for (Double coord: c){
+					 output = output + " " + coord.toString();
+				 }
+				 output = output.substring(1, output.length());
+				 
+				 centroid.set(output);
+				 k.set("centroid");
+				 context.write(k, centroid);
+			 }
+		 }
+	
+	 }
+}

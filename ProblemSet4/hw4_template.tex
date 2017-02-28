@@ -1,6 +1,7 @@
 \documentclass[11pt]{article}
 \usepackage{fullpage}
-\usepackage{url, graphicx}
+\usepackage{url, graphicx, amsmath}
+\usepackage[english]{babel}
 \begin{document}
 \thispagestyle{empty}
 \parindent 0pt
@@ -61,10 +62,19 @@ The associated $w = (-1, 0, -0.5)$
 \caption{$\psi=(\phi_1 - \phi_2,\phi_1 + \phi_2,−1)$}
 \end{figure}
 
-
-
 \pagebreak[4]
 \section*{Answer to Question 2(a)}
+$$
+\nabla_b f(w, b) = C\sum_{i=n}^{n}\frac{\partial L(x_i, y_i)}{\partial b}
+$$
+Where:
+$$
+\frac{\partial L(x_i, y_i)}{\partial b} =
+  \begin{cases}
+    0       & \quad \text{if } y_i(x_i w + b) \geq 1\\
+    -y_i  & \quad \text{if } otherwise.\\
+  \end{cases}
+$$
 
 \pagebreak[4]
 \section*{Answer to Question 2(b)}
