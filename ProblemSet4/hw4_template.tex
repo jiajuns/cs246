@@ -79,7 +79,7 @@ $$
 \pagebreak[4]
 \section*{Answer to Question 2(b)}
 From the plot below, it can be seen that stochastic gradient descent takes more iterations than the other methods.
-Batch gradient descent takes less iterations. However, during each iteration for batch gradient descent, 
+Batch gradient descent takes less iterations. However, during each iteration for batch gradient descent,
 it actually loops through the whole training set. Therefore, batch gradient descent takes more memory and it is computaion intensive.\\
 \\
 When comparing minibatch and SGD, minibatch takes less time than SGD even the overall computation cost for minibatch is higher.
@@ -89,7 +89,7 @@ Another advantage for minibatch gradient descent is minibatch is more stable and
 \begin{figure}[h]
 \center
 \includegraphics[scale=0.5]{gradientDescent.png}
-\caption{$\psi=(\phi_1 - \phi_2,\phi_1 + \phi_2,−1)$}
+\caption{gradient descent comparision}
 \end{figure}
 
 \pagebreak[4]
@@ -109,8 +109,8 @@ $$
 \begin{aligned}
   G & = I(D) - (I(D_L)+I(D_R))\\
   & = 100(1-(60/100)^2-(40/100)^2) - (30(1-(2/3)^2-(1/3)^2) + 70(1-(4/7)^2-(3/7)^2))\\
-  & = 48 - (13.3 + 34.3)\\
-  & = -0.4
+  & = 48 - (13.33 + 34.29)\\
+  & = 0.38
 \end{aligned}
 $$
 
@@ -132,7 +132,8 @@ The decision tree should look at, it splits based on $a_1$ at the root.
 When moving downwards, it take the next the attribute with the highest percentage rate.
 As a result, this tree will have $2^{100}$ leaves.\\
 \\
-The decision tree should limit its split nodes. We can set a threshold for making new split during the training time.
+The decision tree should limit its split nodes. For this case, we can take $a_1$ as the only split node.
+In a general setting, we can set a threshold for making new split during the training time.
 If the gain in gini index is smaller than the threshold, there will be no new split based that attribute.
 Also we can use post-pruning, if we have validation datasets, we can test from the leave to root whether each node is useful or not.
 If the node does not improve error rate on the dev set, we can post-prune those nodes.
@@ -178,12 +179,11 @@ $$
 
 \pagebreak[4]
 \section*{Answer to Question 4(b)}
+Roughly when word frequence is larger than $2 \times 10^{-5}$, the relative error is smaller than 1.
 \begin{figure}[h]
 \center
 \includegraphics[scale=0.5]{streaming.png}
 \end{figure}
-
-
 
 \pagebreak[4]
 \begin{center}
